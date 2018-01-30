@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Cmput 301 - Assignment 1.iml" filepath="$PROJECT_DIR$/Cmput 301 - Assignment 1.iml" />
+      <module fileurl="file://C:\cmput301\git\ali5-SubBook\Cmput 301 - Assignment 1.iml" filepath="C:\cmput301\git\ali5-SubBook\Cmput 301 - Assignment 1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ali5-SubBook.iml" filepath="$PROJECT_DIR$/ali5-SubBook.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
