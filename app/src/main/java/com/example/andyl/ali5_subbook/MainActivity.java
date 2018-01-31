@@ -36,13 +36,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // When called, switch to another screen to view all current subscriptions
-    public void viewSubscription(View view){
-        // Do something in response to button
-        Intent intent = new Intent (this, viewDataActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".insertDataActivity" />
-        <activity android:name=".viewDataActivity"></activity>
     </application>
 
 </manifest>

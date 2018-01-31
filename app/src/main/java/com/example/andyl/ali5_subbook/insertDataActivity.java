@@ -14,10 +14,7 @@ public class insertDataActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_data);
-    }
 
-    // Adds subscription
-    public void addSubscription(View view){
         EditText subscription = (EditText) findViewById(R.id.editText);
         EditText cost = (EditText) findViewById(R.id.editText2);
         EditText date = (EditText) findViewById(R.id.editText3);
