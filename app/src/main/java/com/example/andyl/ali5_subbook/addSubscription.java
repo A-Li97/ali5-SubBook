@@ -1,34 +1,29 @@
 package com.example.andyl.ali5_subbook;
-
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.EditText;
-
-import com.example.andyl.ali5_subbook.R;
-
 import java.util.Date;
 
 /**
  * Created by Andy on 1/30/2018.
  */
 
-public class addSubscription {
+public class addSubscription implements subscriptable{
 
     private String subscription;
     private Date date;
     private Integer cost;
     private String comment;
 
-    public addSubscription(String subscription, Date date, Integer cost){ // Constructor that doesn't contain comment
+    public addSubscription(String subscription, /*Date date,*/ Integer cost){ // Constructor that doesn't contain comment
         this.subscription = subscription;
-        this.date = date;
+        //this.date = date;
+        this.date = new Date();
         this.cost = cost;
         this.comment = new String();
     }
 
-    public addSubscription(String subscription, Date date, Integer cost, String comment){ // Constructor that contains comment
+    public addSubscription(String subscription, /*Date date,*/ Integer cost, String comment){ // Constructor that contains comment
         this.subscription = subscription;
-        this.date = date;
+        //this.date = date;
+        this.date = new Date();
         this.cost = cost;
         this.comment = comment;
     }

@@ -6,6 +6,6 @@
     <string name="edit_subscription">Enter subscription</string>
     <string name="edit_cost">Enter cost</string>
     <string name="edit_date">yyyy-mm-dd</string>
-    <string name="button_addSubscription">Add</string>
+    <string name="button_insert">Add</string>
     <string name="edit_comment">Comment</string>
 </resources>
