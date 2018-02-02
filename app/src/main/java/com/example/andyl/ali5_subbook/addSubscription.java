@@ -9,10 +9,10 @@ public class addSubscription implements subscriptable{
 
     private String subscription;
     private Date date;
-    private Integer cost;
+    private Float cost;
     private String comment;
 
-    public addSubscription(String subscription, /*Date date,*/ Integer cost){ // Constructor that doesn't contain comment
+    public addSubscription(String subscription, /*Date date,*/ Float cost){ // Constructor that doesn't contain comment
         this.subscription = subscription;
         //this.date = date;
         this.date = new Date();
@@ -20,7 +20,7 @@ public class addSubscription implements subscriptable{
         this.comment = new String();
     }
 
-    public addSubscription(String subscription, /*Date date,*/ Integer cost, String comment){ // Constructor that contains comment
+    public addSubscription(String subscription, /*Date date,*/ Float cost, String comment){ // Constructor that contains comment
         this.subscription = subscription;
         //this.date = date;
         this.date = new Date();
@@ -36,7 +36,7 @@ public class addSubscription implements subscriptable{
         return subscription;
     }
 
-    public Integer getCost(){
+    public Float getCost(){
         return cost;
     }
 
@@ -55,7 +55,7 @@ public class addSubscription implements subscriptable{
             this.subscription = subscription;
     }
 
-    public void setCost(Integer cost) throws NegativeCostException{
+    public void setCost(Float cost) throws NegativeCostException{
         if(cost < 0)
             throw new NegativeCostException();
         else

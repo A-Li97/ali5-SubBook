@@ -10,5 +10,5 @@ public interface subscriptable {
     public String getSubscription();
     public String getComment();
     public Date getDate();
-    public Integer getCost();
+    public Float getCost();
 }

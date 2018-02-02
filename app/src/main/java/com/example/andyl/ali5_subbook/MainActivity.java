@@ -8,9 +8,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String FILENAME = "subscriptions.sav";
 
     private String subscription;
-    private Integer cost;
+    private Float cost;
     //private EditText date;
     private String comment;
-    private Integer totalCost;
+    private Float totalCost;
 
     private ArrayList<addSubscription> subscriptionList; // List that holds subscriptions
     private ListView oldSubscriptionList;
     private ArrayAdapter<addSubscription> adapter;
+    //private int ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,17 +63,14 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        */
 
         oldSubscriptionList = (ListView) findViewById(R.id.oldSubscriptionList);
 
-        totalCost = 0;
-    /*
-        if(subscriptionList.size() != 0) { // Check to see if list empty
-            for (int i = 0; i < subscriptionList.size(); i++) {
-                totalCost += subscriptionList.get(i).getCost();
-            }
-        }
-*/
+        registerForContextMenu(oldSubscriptionList);
+
+        totalCost = (float) 0;
+
         TextView textView = findViewById(R.id.textView);
         textView.setText(totalCost.toString());
     }
@@ -81,9 +82,47 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         loadFromFile();
-        adapter = new ArrayAdapter<addSubscription>(this, R.layout.list_item, subscriptionList);
 
+        adapter = new ArrayAdapter<addSubscription>(this, R.layout.list_item, subscriptionList);
         oldSubscriptionList.setAdapter(adapter);
+    }
+
+    // Taken from https://stackoverflow.com/questions/18632331/using-contextmenu-with-listview-in-android
+    // 2018-02-01
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        if (view.getId() == R.id.oldSubscriptionList) {
+
+            ListView lv = (ListView) view;
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            addSubscription obj = (addSubscription) lv.getItemAtPosition(info.position);
+
+            menu.add("edit");
+            menu.add("delete");
+
+        }
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+
+        int index;
+        int choice;
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        index = info.position;
+        choice = item.getItemId();           // Selected option
+
+        if(choice == R.id.edit){
+            return true;
+        }
+
+        else if(choice == R.id.delete){
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -102,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 1){
             if(resultCode == RESULT_OK){
                 subscription = data.getStringExtra("subscription");
-                cost = data.getIntExtra("cost", 0);
+                cost = data.getFloatExtra("cost", 0);
                 comment = data.getStringExtra("comment");
 
                 addSubscription newSubscription = new addSubscription(subscription,cost);
@@ -179,4 +218,6 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException();
         }
     }
+
+    // Add long click hold menu for edit and delete
 }

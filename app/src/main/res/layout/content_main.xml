@@ -34,6 +34,7 @@
         android:layout_height="300dp"
         android:layout_weight="1"
         android:scrollbars="vertical"
+        android:longClickable="true"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
