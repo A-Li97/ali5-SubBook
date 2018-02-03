@@ -1,34 +1,39 @@
 package com.example.andyl.ali5_subbook;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class insertDataActivity extends AppCompatActivity {
 
     private EditText subscription;
     private EditText cost;
-    //private EditText date;
+    private EditText editDate;
     private EditText comment;
-    private ImageButton button;
+
+    private DatePickerDialog.OnDateSetListener date;
+    String dateFormat = "yyyy-mm-dd";
+    SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.CANADA);
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_data);
 
-        button = (ImageButton) findViewById(R.id.imageButton);
-
         subscription = (EditText) findViewById(R.id.editText);
         cost = (EditText) findViewById(R.id.editText2);
-        //date = (EditText) findViewById(R.id.editText3);
+        editDate = (EditText) findViewById(R.id.editText3);
         comment = (EditText) findViewById(R.id.editText4);
 
         // Taken from https://stackoverflow.com/questions/11535011/edittext-field-is-required-before-moving-on-to-another-activity
@@ -40,102 +45,72 @@ public class insertDataActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(cost.getText())) {
             cost.setError("Cost is required!");
         }
- /*
-        if(TextUtils.isEmpty(date.getText())) {
-            date.setError("Date is required!");
+
+        if(TextUtils.isEmpty(editDate.getText())) {
+            editDate.setError("Date is required!");
         }
-*/
-        button.setEnabled(false);
 
-        subscription.addTextChangedListener(new TextWatcher() {
+        // Taken from http://www.moo-code.me/en/2017/04/16/how-to-popup-datepicker-calendar/
+        // 2018-02-02
+
+        date = new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Auto generated method
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateDate();
             }
+        };
 
+        editDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (TextUtils.isEmpty(subscription.getText())) {
-                    button.setEnabled(false);
-                } else
-                    button.setEnabled(true);
-            }
+            public void onClick(View v) {
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // Auto generated method
+                new DatePickerDialog(insertDataActivity.this, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
-        cost.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Auto generated method
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (TextUtils.isEmpty(cost.getText())) {
-                    button.setEnabled(false);
-                } else
-                    button.setEnabled(true);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // Auto generated method
-            }
-        });
-/*
-        date.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Auto generated method
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (TextUtils.isEmpty(date.getText())) {
-                    button.setEnabled(false);
-                }
-                else
-                    button.setEnabled(true);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // Auto generated method
-            }
-        });
-*/
     }
 
-    public void insertSubscription(View view){
-            String name = subscription.getText().toString();
-            Float price = Float.parseFloat(cost.getText().toString());
-            // Add Date
+    private void updateDate() {
+        editDate.setText(sdf.format(calendar.getTime()));
+    }
 
-            if(TextUtils.isEmpty(comment.getText())){
+    public void insertSubscription(View view) {
+        String name = subscription.getText().toString();
+        String day = editDate.getText().toString();
+        String description = comment.getText().toString();
+        double price = 0;
 
+        if(TextUtils.isEmpty(cost.getText())) {
+            cost.setError("Fill in cost!");
+        }
+
+        else{
+            price = Double.parseDouble(cost.getText().toString());
+        }
+
+        if (TextUtils.isEmpty(subscription.getText()) || TextUtils.isEmpty(editDate.getText()) || TextUtils.isEmpty(cost.getText())) {
+            Toast.makeText(this,"Not all boxes filled in!",Toast.LENGTH_LONG).show();
+        }
+
+        else {
+            if (subscription.length() > 20) {
+                subscription.setError("Name too long!");
+            } else if (comment.length() > 30) {
+                comment.setError("Comment too long!");
+            } else {
                 Intent intent = new Intent();
-                intent.putExtra("subscription", "name");
-                intent.putExtra("cost", "price");
-                setResult(RESULT_OK, intent);
-                finish();
-
-            }
-
-            else{
-
-                String description = comment.getText().toString();
-
-                Intent intent = new Intent();
-                intent.putExtra("subscription", "name");
-                intent.putExtra("cost", "price");
-                intent.putExtra("comment","description");
+                intent.putExtra("subscription", name);
+                intent.putExtra("cost", price);
+                intent.putExtra("date", day);
+                intent.putExtra("comment", description);
                 setResult(RESULT_OK, intent);
                 finish();
 
             }
         }
+    }
 }

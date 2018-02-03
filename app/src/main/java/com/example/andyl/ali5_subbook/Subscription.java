@@ -1,34 +1,27 @@
 package com.example.andyl.ali5_subbook;
-import java.util.Date;
 
-/**
- * Created by Andy on 1/30/2018.
- */
-
-public class addSubscription implements subscriptable{
+public class Subscription implements subscriptable{
 
     private String subscription;
-    private Date date;
-    private Float cost;
+    private String date;
+    private Double cost;
     private String comment;
 
-    public addSubscription(String subscription, /*Date date,*/ Float cost){ // Constructor that doesn't contain comment
+    public Subscription(String subscription, String date, Double cost){ // Constructor that doesn't contain comment
         this.subscription = subscription;
-        //this.date = date;
-        this.date = new Date();
+        this.date = date;
         this.cost = cost;
         this.comment = new String();
     }
 
-    public addSubscription(String subscription, /*Date date,*/ Float cost, String comment){ // Constructor that contains comment
+    public Subscription(String subscription, String date, Double cost, String comment){ // Constructor that contains comment
         this.subscription = subscription;
-        //this.date = date;
-        this.date = new Date();
+        this.date = date;
         this.cost = cost;
         this.comment = comment;
     }
 
-    public Date getDate(){
+    public String getDate(){
         return date;
     }
 
@@ -36,7 +29,7 @@ public class addSubscription implements subscriptable{
         return subscription;
     }
 
-    public Float getCost(){
+    public Double getCost(){
         return cost;
     }
 
@@ -44,7 +37,7 @@ public class addSubscription implements subscriptable{
         return comment;
     }
 
-    public void setDate(Date date){
+    public void setDate(String date){
         this.date = date;
     }
 
@@ -55,7 +48,7 @@ public class addSubscription implements subscriptable{
             this.subscription = subscription;
     }
 
-    public void setCost(Float cost) throws NegativeCostException{
+    public void setCost(Double cost) throws NegativeCostException{
         if(cost < 0)
             throw new NegativeCostException();
         else
@@ -67,5 +60,9 @@ public class addSubscription implements subscriptable{
             throw new CommentTooLongException();
         else
             this.comment = comment;
+    }
+
+    public String toString() {
+        return subscription +"\n" + date + " | $" + cost.toString();
     }
 }

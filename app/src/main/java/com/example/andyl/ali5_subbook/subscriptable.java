@@ -9,6 +9,6 @@ import java.util.Date;
 public interface subscriptable {
     public String getSubscription();
     public String getComment();
-    public Date getDate();
-    public Float getCost();
+    public String getDate();
+    public Double getCost();
 }

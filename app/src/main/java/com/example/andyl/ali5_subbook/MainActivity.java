@@ -3,21 +3,16 @@ package com.example.andyl.ali5_subbook;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,46 +28,42 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import static android.view.Menu.NONE;
+
 public class MainActivity extends AppCompatActivity {
     private static final String FILENAME = "subscriptions.sav";
 
-    private String subscription;
-    private Float cost;
-    //private EditText date;
-    private String comment;
-    private Float totalCost;
-
-    private ArrayList<addSubscription> subscriptionList; // List that holds subscriptions
+    private ArrayList<Subscription> subscriptionList; // List that holds subscriptions
     private ListView oldSubscriptionList;
-    private ArrayAdapter<addSubscription> adapter;
-    //private int ;
+    private ArrayAdapter<Subscription> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
 
         oldSubscriptionList = (ListView) findViewById(R.id.oldSubscriptionList);
 
         registerForContextMenu(oldSubscriptionList);
 
-        totalCost = (float) 0;
+    }
+
+    public void calculateCost() {
+        double temp = 0;
+        double totalCost;
+
+        for(int i = 0; i < subscriptionList.size(); i++) {
+            temp += subscriptionList.get(i).getCost();
+        }
+
+        totalCost = Math.round(temp*100.0)/100.0;
 
         TextView textView = findViewById(R.id.textView);
-        textView.setText(totalCost.toString());
+        textView.setText(String.valueOf("$ " + totalCost));
     }
 
     @Override
@@ -82,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         loadFromFile();
+        calculateCost();
 
-        adapter = new ArrayAdapter<addSubscription>(this, R.layout.list_item, subscriptionList);
+        adapter = new ArrayAdapter<Subscription>(this, R.layout.list_item, subscriptionList);
         oldSubscriptionList.setAdapter(adapter);
     }
 
@@ -92,19 +84,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+
         if (view.getId() == R.id.oldSubscriptionList) {
 
-            ListView lv = (ListView) view;
+            //ListView lv = (ListView) view;
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            addSubscription obj = (addSubscription) lv.getItemAtPosition(info.position);
+            //addSubscription obj = (addSubscription) lv.getItemAtPosition(info.position);
 
             menu.add("edit");
             menu.add("delete");
-
+            menu.add("more info");
         }
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
+        super.onContextItemSelected(item);
 
         int index;
         int choice;
@@ -114,21 +109,33 @@ public class MainActivity extends AppCompatActivity {
         index = info.position;
         choice = item.getItemId();           // Selected option
 
-        if(choice == R.id.edit){
-            return true;
-        }
+        switch (choice) {
+            case R.id.edit:
+                return true;
 
-        else if(choice == R.id.delete){
-            return false;
-        }
+            case R.id.delete:
+                adapter.remove(adapter.getItem(index));
+                subscriptionList.remove(subscriptionList.get(index));
 
-        return true;
+                Toast.makeText(this,item.getTitle().toString(),Toast.LENGTH_LONG).show();
+
+                adapter.notifyDataSetChanged();
+
+                saveInFile();
+
+                return true;
+
+            case R.id.more_info:
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
 
     // When called, switch to another screen to deal with addition of new subscription
     public void addNewSubscription(View view){
-        // Do something in response to button
         Intent intent = new Intent(this, insertDataActivity.class);
         startActivityForResult(intent,1);
     }
@@ -138,21 +145,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+        final String subscription;
+        final double cost;
+        final String date;
+        final String comment;
+
         if(requestCode == 1){
             if(resultCode == RESULT_OK){
                 subscription = data.getStringExtra("subscription");
-                cost = data.getFloatExtra("cost", 0);
+                cost = data.getDoubleExtra("cost", 0);
                 comment = data.getStringExtra("comment");
+                date = data.getStringExtra("date");
 
-                addSubscription newSubscription = new addSubscription(subscription,cost);
+                Subscription newSubscription = new Subscription(subscription, date, cost, comment);
                 subscriptionList.add(newSubscription);
 
-                /*
-                if(!subscriptionList.isEmpty()){
-                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(500);
-                }
-                */
                 adapter.notifyDataSetChanged();
 
                 saveInFile();
@@ -160,28 +167,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-      private void loadFromFile() {
+    private void loadFromFile() {
         try {
             FileInputStream fis = openFileInput(FILENAME);
             BufferedReader in = new BufferedReader(new InputStreamReader(fis));
@@ -191,11 +177,11 @@ public class MainActivity extends AppCompatActivity {
             // Taken from https://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt
             // 2018-01-25
 
-            Type listType = new TypeToken<ArrayList<addSubscription>>(){}.getType();
+            Type listType = new TypeToken<ArrayList<Subscription>>(){}.getType();
             subscriptionList = gson.fromJson(in, listType);
 
         } catch (FileNotFoundException e) {
-            subscriptionList = new ArrayList<addSubscription>();
+            subscriptionList = new ArrayList<Subscription>();
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -218,6 +204,4 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException();
         }
     }
-
-    // Add long click hold menu for edit and delete
 }
