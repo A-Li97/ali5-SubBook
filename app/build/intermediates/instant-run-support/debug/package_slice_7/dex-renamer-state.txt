@@ -1,0 +1,4 @@
+#Mon Feb 05 10:07:42 MST 2018
+base.0=C\:\\cmput301\\git\\ali5-SubBook\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\7
+path.0=classes.dex
+renamed.0=classes.dex
