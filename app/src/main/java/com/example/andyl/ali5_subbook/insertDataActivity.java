@@ -22,7 +22,7 @@ public class insertDataActivity extends AppCompatActivity {
     private EditText comment;
 
     private DatePickerDialog.OnDateSetListener date;
-    String dateFormat = "yyyy-mm-dd";
+    String dateFormat = "yyyy-MM-dd";
     SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.CANADA);
     Calendar calendar = Calendar.getInstance();
 
@@ -31,10 +31,21 @@ public class insertDataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_data);
 
+        Bundle extras = getIntent().getExtras();
+
         subscription = (EditText) findViewById(R.id.editText);
         cost = (EditText) findViewById(R.id.editText2);
         editDate = (EditText) findViewById(R.id.editText3);
         comment = (EditText) findViewById(R.id.editText4);
+
+        if(getIntent().hasExtra("subscription"))
+            subscription.setText(extras.getString("subscription"));
+        if(getIntent().hasExtra("cost"))
+            cost.setText(extras.getString("cost"));
+        if(getIntent().hasExtra("date"))
+            editDate.setText(extras.getString("date"));
+        if(getIntent().hasExtra("comment"))
+            comment.setText(extras.getString("comment"));
 
         // Taken from https://stackoverflow.com/questions/11535011/edittext-field-is-required-before-moving-on-to-another-activity
         // 2018-01-29

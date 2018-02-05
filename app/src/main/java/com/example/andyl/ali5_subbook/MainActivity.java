@@ -1,16 +1,22 @@
 package com.example.andyl.ali5_subbook;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Subscription> subscriptionList; // List that holds subscriptions
     private ListView oldSubscriptionList;
     private ArrayAdapter<Subscription> adapter;
+
+    private int index;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,14 +94,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
 
         if (view.getId() == R.id.oldSubscriptionList) {
-
-            //ListView lv = (ListView) view;
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            //addSubscription obj = (addSubscription) lv.getItemAtPosition(info.position);
-
-            menu.add("edit");
-            menu.add("delete");
-            menu.add("more info");
+            menu.add(NONE,R.id.edit,0,"edit");
+            menu.add(NONE,R.id.delete,0,"delete");
+            menu.add(NONE,R.id.more_info,0,"comment");
         }
     }
 
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(android.view.MenuItem item) {
         super.onContextItemSelected(item);
 
-        int index;
+        //int index;
         int choice;
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -111,13 +114,26 @@ public class MainActivity extends AppCompatActivity {
 
         switch (choice) {
             case R.id.edit:
+                final String tempDouble;
+                tempDouble = String.valueOf(subscriptionList.get(index).getCost());
+
+                Intent intent = new Intent(this, insertDataActivity.class);
+                Bundle bundle = new Bundle();
+
+                bundle.putString("subscription", subscriptionList.get(index).getSubscription());
+                bundle.putString("date", subscriptionList.get(index).getDate());
+                bundle.putString("comment", subscriptionList.get(index).getComment());
+                bundle.putString("cost", tempDouble);
+
+                intent.putExtras(bundle);
+
+                startActivityForResult(intent, 2);
+
                 return true;
 
             case R.id.delete:
-                adapter.remove(adapter.getItem(index));
                 subscriptionList.remove(subscriptionList.get(index));
-
-                Toast.makeText(this,item.getTitle().toString(),Toast.LENGTH_LONG).show();
+                calculateCost();
 
                 adapter.notifyDataSetChanged();
 
@@ -126,6 +142,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.more_info:
+                AlertDialog showComment = new AlertDialog.Builder(this).create();
+
+                showComment.setTitle(adapter.getItem(index).getSubscription());
+                showComment.setMessage(adapter.getItem(index).getComment());
+
+                showComment.show();
+
                 return true;
 
             default:
@@ -143,15 +166,15 @@ public class MainActivity extends AppCompatActivity {
     // Taken from https://stackoverflow.com/questions/14292398/how-to-pass-data-from-2nd-activity-to-1st-activity-when-pressed-back-android/14292451
     // 2018-01-31
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         final String subscription;
         final double cost;
         final String date;
         final String comment;
 
-        if(requestCode == 1){
-            if(resultCode == RESULT_OK){
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
                 subscription = data.getStringExtra("subscription");
                 cost = data.getDoubleExtra("cost", 0);
                 comment = data.getStringExtra("comment");
@@ -159,6 +182,22 @@ public class MainActivity extends AppCompatActivity {
 
                 Subscription newSubscription = new Subscription(subscription, date, cost, comment);
                 subscriptionList.add(newSubscription);
+
+                adapter.notifyDataSetChanged();
+
+                saveInFile();
+            }
+        } else if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                subscription = data.getStringExtra("subscription");
+                cost = data.getDoubleExtra("cost", 0);
+                comment = data.getStringExtra("comment");
+                date = data.getStringExtra("date");
+
+                Subscription newSubscription = new Subscription(subscription, date, cost, comment);
+                //subscriptionList.add(newSubscription);
+
+                subscriptionList.set(index, newSubscription);
 
                 adapter.notifyDataSetChanged();
 
