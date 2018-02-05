@@ -1,24 +1,17 @@
 package com.example.andyl.ali5_subbook;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +29,13 @@ import java.util.ArrayList;
 
 import static android.view.Menu.NONE;
 
+/**
+ * @author Andy Li
+ * @version 1
+ * @see insertDataActivity
+ * @see Subscription
+ */
+
 public class MainActivity extends AppCompatActivity {
     private static final String FILENAME = "subscriptions.sav";
 
@@ -44,6 +44,15 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<Subscription> adapter;
 
     private int index;
+
+    /**
+     * Initialized when app is first started.
+     * <p>
+     * This method saves the state of the application, so that if it ever needs to be recreated,
+     * prior information isn't lost.
+     *
+     * @param savedInstanceState info
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method prints the total cost of all subscriptions currently added,
+     * if there is no subscription it prints out 0.
+     */
+
     public void calculateCost() {
         double temp = 0;
         double totalCost;
@@ -74,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(String.valueOf("$ " + totalCost));
     }
 
+    /**
+     * This method differs from onCreate since it is called every instance the activity is visible to the user,
+     * this is different then onCreate since in onCreate it is only called when the process is started.
+     */
+
     @Override
     protected void onStart() {
         // TODO Auto-generated method stub
@@ -86,6 +105,16 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<Subscription>(this, R.layout.list_item, subscriptionList);
         oldSubscriptionList.setAdapter(adapter);
     }
+
+    /**
+     * This method creates a context menu with the options, add, delete,
+     * and comment for each item in a listview.
+     *
+     * @param menu          menu being buiit
+     * @param view          view to print context menu on
+     * @param menuInfo      extra info about the item
+     */
+
 
     // Taken from https://stackoverflow.com/questions/18632331/using-contextmenu-with-listview-in-android
     // 2018-02-01
@@ -100,11 +129,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This methods determines which option of the context menu for the given item clicked on,
+     * which include editting, the comment (if it has one) and the option to delete the item
+     *
+     * @param item  item on listview that was clicked on
+     * @return      boolean
+     * @see         insertDataActivity
+     */
+
     @Override
     public boolean onContextItemSelected(android.view.MenuItem item) {
         super.onContextItemSelected(item);
 
-        //int index;
         int choice;
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -156,12 +193,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method goes to a new activity to deal with adding a new subscription
+     *
+     * @param view starts it from the current view
+     * @see   insertDataActivity
+     */
 
     // When called, switch to another screen to deal with addition of new subscription
     public void addNewSubscription(View view){
         Intent intent = new Intent(this, insertDataActivity.class);
         startActivityForResult(intent,1);
     }
+
+    /**
+     * This method retrieves info from insertDataActivity and adds a new subscription to the arrayList.
+     * It then notifies the adapter and saves it to file.
+     *
+     * @param requestCode   determines which intent it was from
+     * @param resultCode    result code from child
+     * @param data          data retrieved from other activity
+     * @see                 Subscription
+     */
 
     // Taken from https://stackoverflow.com/questions/14292398/how-to-pass-data-from-2nd-activity-to-1st-activity-when-pressed-back-android/14292451
     // 2018-01-31
@@ -195,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
                 date = data.getStringExtra("date");
 
                 Subscription newSubscription = new Subscription(subscription, date, cost, comment);
-                //subscriptionList.add(newSubscription);
 
                 subscriptionList.set(index, newSubscription);
 
@@ -205,6 +257,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * This method loads the subscriptions previously saved (if any) from file into and arrayList.
+     */
 
     private void loadFromFile() {
         try {
@@ -224,8 +280,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException();
         }
-
     }
+
+    /**
+     * This method saves the currently added subscriptions in the arrayList (if any) to file.
+     */
+
     private void saveInFile(){
         try {
             FileOutputStream fos = openFileOutput(FILENAME,

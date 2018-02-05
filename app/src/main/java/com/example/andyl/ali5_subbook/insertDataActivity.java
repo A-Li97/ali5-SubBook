@@ -14,6 +14,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+/**
+ * @author Andy Li
+ * @version 1
+ * @see MainActivity
+ */
+
 public class insertDataActivity extends AppCompatActivity {
 
     private EditText subscription;
@@ -25,6 +31,16 @@ public class insertDataActivity extends AppCompatActivity {
     String dateFormat = "yyyy-MM-dd";
     SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.CANADA);
     Calendar calendar = Calendar.getInstance();
+
+    /**
+     * Initialized when app is first started.
+     * <p>
+     * This method saves the state of the application, so that if it ever needs to be recreated,
+     * prior information isn't lost.
+     *
+     * @param savedInstanceState info
+     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +101,20 @@ public class insertDataActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method sets the chosen date from the date picker onto the editText object.
+     */
+
     private void updateDate() {
         editDate.setText(sdf.format(calendar.getTime()));
     }
+
+    /**
+     * This method takes the values entered by the user and sends it back to the main activity.
+     *
+     * @param view  the current view
+     * @see         MainActivity
+     */
 
     public void insertSubscription(View view) {
         String name = subscription.getText().toString();
