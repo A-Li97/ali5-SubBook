@@ -54,6 +54,7 @@ public class insertDataActivity extends AppCompatActivity {
         editDate = (EditText) findViewById(R.id.editText3);
         comment = (EditText) findViewById(R.id.editText4);
 
+        // Checks if values were passed in for editing a subscription, if so, set the editTexts to them
         if(getIntent().hasExtra("subscription"))
             subscription.setText(extras.getString("subscription"));
         if(getIntent().hasExtra("cost"))
@@ -70,7 +71,7 @@ public class insertDataActivity extends AppCompatActivity {
             subscription.setError("Subscription name is required!");
         }
         if (TextUtils.isEmpty(cost.getText())) {
-            cost.setError("Cost is required!");
+            cost.setError("Monthly cost required!");
         }
 
         if(TextUtils.isEmpty(editDate.getText())) {
@@ -136,9 +137,9 @@ public class insertDataActivity extends AppCompatActivity {
 
         else {
             if (subscription.length() > 20) {
-                subscription.setError("Name too long!");
+                subscription.setError("Name over 20 characters long!");
             } else if (comment.length() > 30) {
-                comment.setError("Comment too long!");
+                comment.setError("Comment over 30 characters long!");
             } else {
                 Intent intent = new Intent();
                 intent.putExtra("subscription", name);

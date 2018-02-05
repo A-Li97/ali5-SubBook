@@ -147,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         index = info.position;
-        choice = item.getItemId();           // Selected option
+        choice = item.getItemId();                                      // Selected option
 
         switch (choice) {
-            case R.id.edit:
+            case R.id.edit:                                             // Deals with editing of a subscription
                 final String tempDouble;
                 tempDouble = String.valueOf(subscriptionList.get(index).getCost());
 
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
 
-            case R.id.delete:
+            case R.id.delete:                                           // Deletes subscription from list
                 subscriptionList.remove(subscriptionList.get(index));
                 calculateCost();
 
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
 
-            case R.id.more_info:
+            case R.id.more_info:                                        // Shows comment
                 AlertDialog showComment = new AlertDialog.Builder(this).create();
 
                 showComment.setTitle(adapter.getItem(index).getSubscription());
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         final String date;
         final String comment;
 
-        if (requestCode == 1) {
+        if (requestCode == 1) {                                         // Deals with addition of a subscription
             if (resultCode == RESULT_OK) {
                 subscription = data.getStringExtra("subscription");
                 cost = data.getDoubleExtra("cost", 0);
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 
                 saveInFile();
             }
-        } else if (requestCode == 2) {
+        } else if (requestCode == 2) {                                  // Deals with editing of a subscription
             if (resultCode == RESULT_OK) {
                 subscription = data.getStringExtra("subscription");
                 cost = data.getDoubleExtra("cost", 0);
