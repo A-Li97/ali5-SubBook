@@ -108,6 +108,7 @@ public class insertDataActivity extends AppCompatActivity {
 
     private void updateDate() {
         editDate.setText(sdf.format(calendar.getTime()));
+        editDate.setError(null);
     }
 
     /**
